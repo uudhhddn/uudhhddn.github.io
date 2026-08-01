@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0E2A52">
+<title>毫米波布拉格衍射仪 · 仪器图纸集</title>
+<style>
+:root{
+  --ink:#0E2A52; --field:#16407C; --panel:#1B4B8F; --panel2:#123868;
+  --line:#E9F1FF; --dim:rgba(233,241,255,.42); --faint:rgba(233,241,255,.16);
+  --grid:rgba(233,241,255,.06); --seal:#E2542F; --brass:#F0B429;
+  --disp:"Noto Serif SC","Source Han Serif SC","Songti SC","STSong","SimSun",serif;
+  --body:system-ui,"PingFang SC","MiSans","HarmonyOS Sans SC","Microsoft YaHei",sans-serif;
+  --mono:"SF Mono","Roboto Mono",Consolas,"Courier New",monospace;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ink);color:var(--line);font-family:var(--body);
+  background-image:
+    repeating-linear-gradient(0deg,var(--grid) 0 1px,transparent 1px 28px),
+    repeating-linear-gradient(90deg,var(--grid) 0 1px,transparent 1px 28px);
+  line-height:1.65;font-size:15.5px}
+a{color:inherit}
+.wrap{max-width:760px;margin:0 auto;padding:0 14px 60px}
+/* ---- 顶部图纸集目录 ---- */
+nav{position:sticky;top:0;z-index:50;background:rgba(14,42,82,.9);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--faint)}
+nav .in{max-width:760px;margin:0 auto;display:flex;gap:2px;overflow-x:auto;padding:8px 10px;scrollbar-width:none}
+nav .in::-webkit-scrollbar{display:none}
+nav a{flex:0 0 auto;font-size:12.5px;padding:5px 11px;border:1px solid var(--faint);border-radius:4px;
+  text-decoration:none;color:var(--dim);font-family:var(--mono);white-space:nowrap}
+nav a b{color:var(--line);font-weight:600;margin-left:4px;font-family:var(--body)}
+/* ---- 图纸幅面 ---- */
+.sheet{position:relative;margin:26px 0;border:1.5px solid var(--line);border-radius:4px;
+  background:linear-gradient(180deg,var(--field),var(--panel2));padding:20px 16px 22px;
+  box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.sheet::before,.sheet::after{content:"";position:absolute;width:14px;height:14px;border:1.5px solid var(--line)}
+.sheet::before{left:-1.5px;top:-1.5px;border-right:0;border-bottom:0}
+.sheet::after{right:-1.5px;bottom:-1.5px;border-left:0;border-top:0}
+.eyebrow{display:flex;justify-content:space-between;align-items:baseline;
+  font-family:var(--mono);font-size:11.5px;color:var(--dim);letter-spacing:.08em;margin-bottom:10px}
+.eyebrow i{font-style:normal;color:var(--brass)}
+h2{font-family:var(--disp);font-weight:700;font-size:23px;margin:2px 0 10px;letter-spacing:.02em}
+h2 small{font-size:13px;color:var(--dim);font-family:var(--body);font-weight:400;margin-left:8px}
+p{margin:.5em 0;color:#D9E6FA}
+.note{font-size:13px;color:var(--dim)}
+.mono{font-family:var(--mono)}
+.chip{display:inline-block;font-size:12px;padding:2px 9px;border:1px solid var(--dim);
+  border-radius:3px;color:var(--dim);font-family:var(--mono);margin:2px 4px 2px 0}
+.chip.on{border-color:var(--brass);color:var(--brass)}
+.chip.seal{border-color:var(--seal);color:var(--seal)}
+.rule{height:1px;background:var(--faint);margin:14px 0}
+/* ---- 封面 ---- */
+.hero h1{font-family:var(--disp);font-size:29px;line-height:1.4;margin:6px 0 4px;font-weight:900}
+.hero .sub{color:var(--dim);font-size:14px}
+.plate{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--faint);
+  border:1px solid var(--faint);margin-top:16px;font-size:12.5px}
+.plate div{background:var(--panel2);padding:7px 10px}
+.plate b{display:block;font-family:var(--mono);font-size:11px;color:var(--dim);font-weight:400}
+.heroFig{margin:14px -4px 4px;position:relative}
+.heroFig svg{width:100%;height:auto;display:block}
+.svgline{stroke:var(--line);fill:none;stroke-width:1.4;vector-effect:non-scaling-stroke}
+.svgdim{stroke:var(--dim);fill:none;stroke-width:1;vector-effect:non-scaling-stroke}
+.svgtxt{fill:var(--dim);font-size:9.5px;font-family:var(--mono)}
+.svgtxtB{fill:var(--line);font-size:10.5px;font-family:var(--body)}
+.beam{stroke:var(--brass);stroke-width:1.6;stroke-dasharray:5 6;fill:none;
+  animation:flow 1s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-11}}
+.needle{stroke:var(--seal);stroke-width:2.2}
+.spark .needle{filter:drop-shadow(0 0 4px var(--seal))}
+/* ---- 交互画布 ---- */
+canvas.pad{width:100%;display:block;border:1px solid var(--faint);border-radius:3px;
+  background:rgba(0,0,0,.14);touch-action:none}
+.ctl{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
+.ctl label{font-size:13px;color:var(--dim)}
+input[type=range]{flex:1;min-width:150px;accent-color:var(--brass);height:26px}
+.readout{font-family:var(--mono);font-size:13px;background:rgba(0,0,0,.22);
+  border:1px solid var(--faint);border-radius:3px;padding:9px 11px;margin-top:10px;line-height:1.8}
+.readout .hit{color:var(--brass)}
+.hitflash{animation:hf .5s}
+@keyframes hf{0%{background:rgba(240,180,41,.25)}100%{background:rgba(0,0,0,.22)}}
+button.act{font-family:var(--body);font-size:13.5px;background:transparent;color:var(--line);
+  border:1.5px solid var(--line);border-radius:4px;padding:7px 14px;cursor:pointer}
+button.act.on{background:var(--brass);border-color:var(--brass);color:#11305F;font-weight:600}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.legend button{font-size:12px;background:transparent;border:1px solid var(--faint);color:var(--dim);
+  border-radius:3px;padding:4px 9px;font-family:var(--body)}
+/* ---- 实测 ---- */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0 4px}
+.stats .s{border:1px solid var(--faint);border-radius:4px;padding:9px 6px;text-align:center;background:rgba(0,0,0,.12)}
+.stats .v{font-family:var(--mono);font-size:19px;color:var(--brass)}
+.stats .k{font-size:11px;color:var(--dim);margin-top:2px}
+.stamp{position:absolute;right:10px;top:6px;transform:rotate(9deg);color:var(--seal);
+  border:2.5px solid var(--seal);border-radius:6px;padding:4px 9px;font-family:var(--disp);
+  font-weight:900;font-size:15px;letter-spacing:.2em;opacity:.92;background:rgba(14,42,82,.5)}
+.figwrap{position:relative;margin-top:6px}
+/* ---- 晶格卡 ---- */
+.lats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:12px}
+.lat{border:1px solid var(--faint);border-radius:4px;padding:8px 8px 9px;background:rgba(0,0,0,.12);text-align:center}
+.lat canvas{width:100%;aspect-ratio:1;display:block}
+.lat .nm{font-family:var(--mono);font-size:12.5px;margin-top:4px}
+.lat .pk{font-size:11px;color:var(--dim)}
+.lat .st{font-size:10.5px;margin-top:4px;display:inline-block;padding:1px 7px;border-radius:3px;border:1px solid var(--dim);color:var(--dim)}
+.lat .st.ok{border-color:var(--brass);color:var(--brass)}
+.lat .st.half{border-color:var(--line);color:var(--line)}
+/* ---- 迈克尔逊 ---- */
+.mich{position:relative}
+.mich .badge{position:absolute;right:6px;top:2px;z-index:2}
+.mirror{fill:#CBD9F2;stroke:var(--line);stroke-width:1.4}
+.ghost{fill:none;stroke:var(--dim);stroke-width:1.4;stroke-dasharray:4 4}
+.pathA{stroke:#7FB4FF}.pathB{stroke:#E6A1FF}
+.mpath{stroke-width:1.7;fill:none;stroke-dasharray:6 7;animation:flow 1.1s linear infinite}
+.grab{cursor:grab}
+.meter{height:12px;border:1px solid var(--faint);border-radius:3px;overflow:hidden;background:rgba(0,0,0,.25)}
+.meter i{display:block;height:100%;background:linear-gradient(90deg,#7FB4FF,var(--brass));width:50%}
+/* ---- 路线图 ---- */
+.road{list-style:none;margin:10px 0 0;padding:0}
+.road li{display:flex;justify-content:space-between;gap:10px;padding:9px 2px;border-bottom:1px dashed var(--faint);font-size:14px}
+.road .st{font-family:var(--mono);font-size:11.5px;color:var(--dim);white-space:nowrap}
+.road .st.doing{color:var(--brass)}
+.road .st.plan{color:var(--seal)}
+.team{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.team span{border:1px solid var(--faint);border-radius:3px;padding:4px 10px;font-size:12.5px;color:var(--dim)}
+footer{max-width:760px;margin:0 auto;padding:8px 16px 46px;color:var(--dim);font-size:12px;font-family:var(--mono)}
+.reveal{opacity:0;transform:translateY(14px);transition:opacity .6s,transform .6s}
+.reveal.on{opacity:1;transform:none}
+@media (max-width:430px){.stats{grid-template-columns:repeat(2,1fr)}.lats{grid-template-columns:repeat(2,1fr)}}
+@media (prefers-reduced-motion:reduce){.beam,.mpath{animation:none}.reveal{transition:none;opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<nav><div class="in">
+<a href="#s1">01<b>总装</b></a><a href="#s2">02<b>原理</b></a><a href="#s3">03<b>结构</b></a>
+<a href="#s4">04<b>实测</b></a><a href="#s5">05<b>晶格</b></a><a href="#s6">06<b>波长</b></a><a href="#s7">07<b>在建</b></a>
+</div></nav>
+
+<div class="wrap">
+
+<!-- ======= SHT 01 封面 · 活图纸 ======= -->
+<section class="sheet hero" id="s1">
+  <div class="eyebrow"><span>SHT 01 / 07 · 总装图</span><i id="cfgCode"></i></div>
+  <h1 id="cfgName">毫米波布拉格衍射仪</h1>
+  <div class="sub">用 <span class="mono">12</span> 毫米的波,做 <span class="mono">0.1</span> 纳米的实验——
+  金属棍是"原子",毫米波是"X 光",布拉格定律按 <span class="mono">8×10⁷</span> 倍放大后原样成立。</div>
+
+  <div class="heroFig">
+    <svg id="heroSvg" viewBox="0 0 360 292" aria-label="仪器总装动图">
+      <!-- 度盘转台 -->
+      <circle cx="150" cy="172" r="58" class="svgline"/>
+      <circle cx="150" cy="172" r="52" class="svgdim" stroke-dasharray="2 5"/>
+      <g id="heroPlate"></g>
+      <!-- 发射臂(固定) -->
+      <g>
+        <line x1="16" y1="172" x2="88" y2="172" class="svgline"/>
+        <rect x="16" y="160" width="22" height="24" class="svgline"/>
+        <path d="M96 156 q10 16 0 32" class="svgline"/>
+        <path d="M91 158 q9 14 0 28" class="svgdim"/>
+        <text x="18" y="152" class="svgtxt">发射雷达</text>
+        <text x="84" y="146" class="svgtxt">透镜</text>
+      </g>
+      <line id="beamIn" x1="40" y1="172" x2="150" y2="172" class="beam"/>
+      <!-- 接收臂(2θ 联动) -->
+      <g id="rxArm">
+        <line x1="150" y1="172" x2="258" y2="172" class="svgdim"/>
+        <line x1="206" y1="172" x2="258" y2="172" class="svgline"/>
+        <path d="M204 156 q-10 16 0 32" class="svgline"/>
+        <rect x="258" y="160" width="22" height="24" class="svgline"/>
+        <line id="beamOut" x1="150" y1="172" x2="256" y2="172" class="beam"/>
+      </g>
+      <text x="238" y="278" class="svgtxt">接收雷达 · 臂角 2θ</text>
+      <path id="arcA" class="svgdim" d=""/>
+      <text id="arcTxt" class="svgtxtB" x="0" y="0">2θ</text>
+      <!-- 仪表 -->
+      <g id="gauge">
+        <path d="M262 84 a46 46 0 0 1 92 0" class="svgline" transform="translate(-6,-18)"/>
+        <g id="ticks"></g>
+        <line id="needle" class="needle" x1="302" y1="66" x2="302" y2="30"/>
+        <circle cx="302" cy="66" r="2.6" fill="#E2542F"/>
+        <text x="279" y="84" class="svgtxt">接收强度</text>
+        <text id="a2txt" x="284" y="100" class="svgtxtB" style="font-family:var(--mono)">2θ = 18.0°</text>
+      </g>
+      <!-- 尺寸线味道 -->
+      <line x1="96" y1="252" x2="204" y2="252" class="svgdim"/>
+      <line x1="96" y1="247" x2="96" y2="257" class="svgdim"/>
+      <line x1="204" y1="247" x2="204" y2="257" class="svgdim"/>
+      <text x="128" y="266" class="svgtxt">样品区 Ø100</text>
+    </svg>
+  </div>
+  <p class="note">上图为按实物比例绘制的总装示意:样品盘转 θ,接收臂同步转 2θ;
+  臂扫过 <b class="mono">30°</b> 时表针跳起——那就是这台仪器每天在做的事。</p>
+
+  <div class="plate">
+    <div><b>工作频率 / 波长</b>24.125 GHz · λ = 12.4266 mm</div>
+    <div><b>机械本体</b>JJY1-Ⅲ 分光计改装 · 度盘游标 1′</div>
+    <div><b>收发</b>DEV202E 雷达 ×2 · 自研 3D 打印准直透镜 Ø110</div>
+    <div><b>样品</b>金属棍阵人工晶格 ×6 种 · 共 135 根</div>
+  </div>
+</section>
+
+<!-- ======= SHT 02 原理 ======= -->
+<section class="sheet reveal" id="s2">
+  <div class="eyebrow"><span>SHT 02 / 07 · 原理图</span><i>2d·sinθ = nλ</i></div>
+  <h2>布拉格衍射<small>拖动改变角度,亲手找到那个峰</small></h2>
+  <p>相邻两层"原子"反射的波,多走了一段路(下图<span style="color:var(--brass)">金色折线</span>)。
+  这段路恰好凑满整数个波长时,所有反射波步调一致,叠成强峰。</p>
+  <canvas id="bragg" class="pad" height="250"></canvas>
+  <div class="ctl"><label>掠射角 θ</label><input id="thSlider" type="range" min="5" max="40" step="0.1" value="15"></div>
+  <div class="readout" id="braggRead"></div>
+  <p class="note">本仪器实物参数:层间距 d = 24 mm(square 晶格),λ = 12.43 mm → 一级峰理论位置 2θ = 30.0°。</p>
+</section>
+
+<!-- ======= SHT 03 结构 ======= -->
+<section class="sheet reveal" id="s3">
+  <div class="eyebrow"><span>SHT 03 / 07 · 三维总装</span><i>手指拖动旋转</i></div>
+  <h2>仪器结构<small>θ-2θ 联动是它的灵魂</small></h2>
+  <div id="v3wrap">
+    <canvas id="v3" class="pad" style="height:300px"></canvas>
+    <div class="ctl">
+      <button class="act" id="play3">▶ 演示 θ-2θ 联动</button>
+      <span class="note" id="v3hint">拖动画面可旋转视角</span>
+    </div>
+    <div class="legend" id="legend"></div>
+  </div>
+  <div id="v3fallback" style="display:none">
+    <p class="note">当前网络未能加载三维引擎,以图纸视图代替(不影响其余内容)。</p>
+  </div>
+  <p class="note">联动比 1:2 —— 样品盘转 θ,接收臂转 2θ,一次扫描同时满足"入射角 = 反射角"
+  与布拉格条件的搜索。全程零打孔改装,度盘保持原厂精度。</p>
+</section>
+
+<!-- ======= SHT 04 实测 ======= -->
+<section class="sheet reveal" id="s4">
+  <div class="eyebrow"><span>SHT 04 / 07 · 校准实录</span><i>square 晶格 · 透镜装机后第四轮</i></div>
+  <h2>实测数据<small>不是示意图,是这台机器自己交的卷</small></h2>
+  <div class="figwrap">
+    <div class="stamp">实 测</div>
+    <svg id="chart" viewBox="0 0 360 236" style="width:100%;display:block"></svg>
+  </div>
+  <div class="stats">
+    <div class="s"><div class="v"><span id="cv1">0</span>×</div><div class="k">峰/基线对比度</div></div>
+    <div class="s"><div class="v">29.90°</div><div class="k">拟合峰心(理论 30.00°)</div></div>
+    <div class="s"><div class="v">1.9°</div><div class="k">峰半高宽</div></div>
+    <div class="s"><div class="v">0.3%</div><div class="k">反推晶格常数误差</div></div>
+  </div>
+  <p class="note">由峰位反推晶格常数 a = 24.08 mm(设计值 24.00 mm)——
+  一个峰同时校验了波长、几何与角度刻度三件事。</p>
+</section>
+
+<!-- ======= SHT 05 晶格库 ======= -->
+<section class="sheet reveal" id="s5">
+  <div class="eyebrow"><span>SHT 05 / 07 · 样品库</span><i>坐标与实物一根不差</i></div>
+  <h2>六种人工晶格<small>从教科书晶体到诺奖准晶</small></h2>
+  <div class="lats" id="lats"></div>
+  <p class="note">cscl 的"多放一倍棍子反而少一个峰"(结构因子消光)与 penrose 的
+  "没有周期却有衍射峰"(1982 年准晶发现,2011 年诺贝尔化学奖)是两枚彩蛋。</p>
+</section>
+
+<!-- ======= SHT 06 迈克尔逊 ======= -->
+<section class="sheet reveal mich" id="s6">
+  <div class="eyebrow"><span>SHT 06 / 07 · 波长自测</span><i>迈克尔逊干涉</i></div>
+  <span class="chip seal badge">原理演示 · 实物光路设计中</span>
+  <h2>让仪器自己量出 λ<small>拖动右侧动镜 M₁</small></h2>
+  <p>波被分成两路再汇合:动镜每移动 <b class="mono">λ/2 = 6.21 mm</b>,
+  接收端就明暗一次。数出条纹间距,乘 2,就是波长——不查任何说明书。</p>
+  <svg id="mich" viewBox="0 0 360 300" style="width:100%;display:block;touch-action:none">
+    <text x="14" y="18" class="svgtxt">测量微波波长(原理)</text>
+    <!-- 发射喇叭 -->
+    <path d="M22 138 l26 8 v20 l-26 8 z" class="mirror"/>
+    <text x="14" y="130" class="svgtxt">发射喇叭</text>
+    <!-- 分束板 -->
+    <rect x="146" y="118" width="8" height="76" class="mirror" transform="rotate(45 150 156)"/>
+    <text x="96" y="196" class="svgtxt">半透板</text>
+    <!-- 固定镜 M2 -->
+    <rect x="118" y="34" width="64" height="8" class="mirror"/>
+    <text x="118" y="28" class="svgtxt">固定反射板 M₂</text>
+    <!-- 动镜 M1 -->
+    <rect id="m1ghost" x="252" y="118" width="8" height="76" class="ghost"/>
+    <g id="m1g" class="grab">
+      <rect x="252" y="118" width="8" height="76" class="mirror"/>
+      <path d="M266 150 h14 m-4 -4 l4 4 l-4 4" class="svgline"/>
+      <rect x="240" y="106" width="60" height="100" fill="transparent"/>
+    </g>
+    <text x="238" y="100" class="svgtxt">动反射板 M₁ ⟷ 拖我</text>
+    <!-- 接收喇叭 -->
+    <path d="M138 258 l8 -22 h16 l8 22 z" class="mirror"/>
+    <text x="176" y="252" class="svgtxt">接收喇叭</text>
+    <!-- 光路 -->
+    <path d="M48 156 H150" class="mpath" stroke="var(--brass)"/>
+    <path d="M150 156 V42 M150 42 V156 M150 156 V236" class="mpath pathA"/>
+    <path id="armB" d="M150 156 H252 M252 156 H150 M150 156 V236" class="mpath pathB"/>
+  </svg>
+  <div class="readout" id="michRead"></div>
+  <div class="meter" style="margin-top:8px"><i id="michBar"></i></div>
+  <p class="note">两台雷达分置收发即天然双路干涉仪,不需真实分束器;上图与实验室原理板一致,
+  具体机械实现方案在论证中。</p>
+</section>
+
+<!-- ======= SHT 07 在建 ======= -->
+<section class="sheet reveal" id="s7">
+  <div class="eyebrow"><span>SHT 07 / 07 · 在建工程</span><i>2026-08</i></div>
+  <h2>正在发生的升级</h2>
+  <ul class="road">
+    <li><span>θ-2θ 电机自动联动 · 双步进 + 扇形弧带传动</span><span class="st doing">部件打印中</span></li>
+    <li><span>迈克尔逊波长自测光路</span><span class="st doing">原理就绪 · 机械设计中</span></li>
+    <li><span>实时读数液晶屏(单片机)</span><span class="st doing">开发中</span></li>
+    <li><span>吸波环境 · 微波暗室化</span><span class="st doing">设计中</span></li>
+    <li><span>自动耦合装置</span><span class="st plan">方案论证中</span></li>
+    <li><span>外观优化与说明视频</span><span class="st doing">制作中</span></li>
+  </ul>
+  <div class="team" id="team"></div>
+</section>
+
+</div>
+<footer>本页全部曲线来自本团队实测与自研全波仿真;总装动图按实物比例绘制。<br>
+<span id="cfgFoot"></span></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" onerror="window.__no3d=1"></script>
+<script>
+/* ================= 可编辑配置(队友只改这里) ================= */
+const CFG = {
+  name:"毫米波布拉格衍射仪",
+  code:"图纸集 №2026-01",
+  foot:"参赛单位:—— · 物理实验竞赛 · 2026",
+  team:[["郭玥楷","仿真 · 文档"],["段凯俊","测试 · 自动化"],["何志超","光路 · 暗室"],["孟令智","显示 · 外观"]]
+};
+const LAM=12.4266, D_SQ=24.0;
+/* 六晶格真实坐标(由实物同源生成器导出) */
+const LATS={"square":[[-48,0],[-24,-24],[-24,0],[-24,24],[0,-48],[0,-24],[0,0],[0,24],[0,48],[24,-24],[24,0],[24,24],[48,0]],"hex":[[-50,-21.7],[-25,-21.7],[0,-21.7],[25,-21.7],[50,-21.7],[-37.5,0],[-12.5,0],[12.5,0],[37.5,0],[-50,21.7],[-25,21.7],[0,21.7],[25,21.7],[50,21.7],[-12.5,43.3],[12.5,-43.3]],"cscl":[[-48,0],[-24,-24],[-24,0],[-24,24],[0,-48],[0,-24],[0,0],[0,24],[0,48],[24,-24],[24,0],[24,24],[48,0],[-36,-12],[-36,12],[-12,-36],[-12,-12],[-12,12],[-12,36],[12,-36],[12,-12],[12,12],[12,36],[36,-12],[36,12]],"fcc":[[-42,-42],[-42,0],[-42,42],[0,-42],[0,0],[0,42],[42,-42],[42,0],[42,42],[-21,-21],[-21,21],[21,-21],[21,21],[-21,0],[21,0],[0,-21]],"kagome":[[-42.5,-14.7],[-25.5,-14.7],[-34,0],[-8.5,-44.2],[8.5,-44.2],[0,-29.4],[-8.5,14.7],[8.5,14.7],[0,29.4],[25.5,-14.7],[42.5,-14.7],[34,0],[-42.5,14.7],[-25.5,14.7],[-17,29.4],[-17,0],[17,0],[25.5,14.7],[42.5,14.7],[17,29.4],[0,-14.7],[-17,-29.4],[17,-29.4]],"penrose":[[-9.4,-46.8],[9.4,-46.8],[-29.1,-40.1],[-43.9,-27],[29.1,-40.1],[43.9,-27],[-15.3,-28.6],[15.3,-28.6],[0,-17.5],[-24.7,-11.1],[24.7,-11.1],[-49.4,-5.6],[49.4,-5.6],[-40,7.5],[-15.3,3.9],[15.3,3.9],[40,7.5],[0,15],[-24.7,20.5],[24.7,20.5],[-9.4,35.3],[9.4,35.3],[-34.1,33.9],[34.1,33.9],[-19.1,49.4],[19.1,49.4],[0,47.9],[-45,20.9],[45,20.9],[-30.6,-25.9],[30.6,-25.9],[-5.9,-39],[5.9,-39],[-35.3,-7.8],[35.3,-7.8],[-20.6,-44.6],[20.6,-44.6],[-44.1,9.2],[44.1,9.2],[-11.8,-9.7],[11.8,-9.7],[0,31.7]]};
+document.getElementById('cfgName').textContent=CFG.name;
+document.getElementById('cfgCode').textContent=CFG.code;
+document.getElementById('cfgFoot').textContent=CFG.foot;
+CFG.team.forEach(t=>{const s=document.createElement('span');s.textContent=t[0]+' · '+t[1];team.appendChild(s)});
+
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $=q=>document.querySelector(q);
+/* 实测剖面(第四轮真实点,供表针/图共用) */
+const REAL=[[26,0.7],[28,22],[30,80],[32,11.5],[36,6.4]];
+function profile(a){ // 表针用的平滑包络
+  return 1+79*Math.exp(-(((a-29.9)/1.35)**2))+5*Math.exp(-(((a-62.4)/1.8)**2));
+}
+
+/* ================= SHT01 活图纸 ================= */
+(function(){
+  const plate=$('#heroPlate');
+  LATS.square.forEach(p=>{const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('r',2.6);c.setAttribute('cx',150+p[0]*.62);c.setAttribute('cy',172+p[1]*.62);
+    c.setAttribute('fill','#E9F1FF');plate.appendChild(c);});
+  const tk=$('#ticks');
+  for(let i=0;i<=8;i++){const a=Math.PI*(1+i/8),x=302+40*Math.cos(a),y=66+40*Math.sin(a),
+    x2=302+45*Math.cos(a),y2=66+45*Math.sin(a);
+    const l=document.createElementNS('http://www.w3.org/2000/svg','line');
+    l.setAttribute('x1',x);l.setAttribute('y1',y);l.setAttribute('x2',x2);l.setAttribute('y2',y2);
+    l.setAttribute('class','svgdim');tk.appendChild(l);}
+  const rx=$('#rxArm'),needle=$('#needle'),a2=$('#a2txt'),g=$('#gauge'),arc=$('#arcA'),arcT=$('#arcTxt');
+  let t=0;
+  function setA(A){
+    rx.setAttribute('transform',`rotate(${-A} 150 172)`);
+    plate.setAttribute('transform',`rotate(${-A/2} 150 172)`);
+    const v=profile(A), ang=-90+180*Math.log10(v)/Math.log10(85);
+    needle.setAttribute('transform',`rotate(${ang} 302 66)`);
+    a2.textContent='2θ = '+A.toFixed(1)+'°';
+    g.classList.toggle('spark',v>35);
+    const r=34,x=150+r*Math.cos(-A*Math.PI/180),y=172+r*Math.sin(-A*Math.PI/180);
+    arc.setAttribute('d',`M ${150+r} 172 A ${r} ${r} 0 0 0 ${x} ${y}`);
+    arcT.setAttribute('x',150+(r+13)*Math.cos(-A/2*Math.PI/180)-8);
+    arcT.setAttribute('y',172+(r+13)*Math.sin(-A/2*Math.PI/180)+4);
+  }
+  if(RM){setA(30);return}
+  (function loop(){t+=0.006;setA(18+29*(1-Math.cos(t*Math.PI)));requestAnimationFrame(loop)})();
+})();
+
+/* ================= SHT02 布拉格交互 ================= */
+(function(){
+  const cv=$('#bragg'),sl=$('#thSlider'),out=$('#braggRead');
+  function draw(){
+    const dpr=Math.min(devicePixelRatio||1,2),W=cv.clientWidth;
+    cv.width=W*dpr;cv.height=250*dpr;
+    const g=cv.getContext('2d');g.scale(dpr,dpr);
+    const th=+sl.value*Math.PI/180, d=58, y1=96, y2=y1+d, cx=W/2;
+    g.clearRect(0,0,W,250);
+    g.fillStyle='#E9F1FF';
+    for(let r=0;r<2;r++)for(let i=-3;i<=3;i++){g.beginPath();g.arc(cx+i*44,r?y2:y1,3.2,0,7);g.fill();}
+    g.fillStyle='rgba(233,241,255,.4)';g.font='10px monospace';
+    g.fillText('d = 24 mm',cx+140,(y1+y2)/2+3);
+    g.strokeStyle='rgba(233,241,255,.35)';g.setLineDash([2,4]);
+    g.beginPath();g.moveTo(cx+132,y1);g.lineTo(cx+132,y2);g.stroke();g.setLineDash([]);
+    const dir=[Math.cos(th),Math.sin(th)];
+    function ray(px,py,hit){ // 入射+反射
+      g.beginPath();g.moveTo(px-dir[0]*160,py-dir[1]*160);g.lineTo(px,py);
+      g.lineTo(px+dir[0]*160,py-dir[1]*160);g.stroke();
+      if(hit){g.beginPath();g.arc(px,py,4.5,0,7);g.stroke();}
+    }
+    g.strokeStyle='#7FB4FF';g.lineWidth=1.6;
+    ray(cx,y1,true);
+    g.strokeStyle='rgba(127,180,255,.75)';ray(cx,y2,true);
+    // 光程差:两段 d·sinθ
+    const s=Math.sin(th),c=Math.cos(th);
+    const A=[cx- d*s*c, y1+d*c*c]; // 波前在入射腿上的垂足
+    const B=[cx+ d*s*c, y1+d*c*c]; // 波前在出射腿上的垂足
+    g.strokeStyle='#F0B429';g.lineWidth=2.4;
+    g.beginPath();g.moveTo(A[0],A[1]);g.lineTo(cx,y2);g.lineTo(B[0],B[1]);g.stroke();
+    g.strokeStyle='rgba(240,180,41,.5)';g.lineWidth=1;
+    g.beginPath();g.moveTo(cx,y1);g.lineTo(A[0],A[1]);g.moveTo(cx,y1);g.lineTo(B[0],B[1]);g.stroke();
+    g.fillStyle='#F0B429';g.font='11px monospace';
+    g.fillText('多走的路 = 2d·sinθ',cx-58,y2+34);
+    const pd=2*D_SQ*Math.sin(th);
+    let rows='',hit=0;
+    for(const n of[1,2]){const need=n*LAM,ok=Math.abs(pd-need)<0.5;if(ok)hit=n;
+      rows+=`<div${ok?' class="hit"':''}>n=${n} 需要 ${need.toFixed(2)} mm ${ok?'← 相长干涉!峰!':''}</div>`}
+    out.innerHTML=`θ = ${(+sl.value).toFixed(1)}°(2θ = ${(2*sl.value).toFixed(1)}°) · 2d·sinθ = <b>${pd.toFixed(2)} mm</b>`+rows;
+    if(hit&&!out.dataset.h){out.classList.remove('hitflash');void out.offsetWidth;out.classList.add('hitflash')}
+    out.dataset.h=hit;
+  }
+  sl.addEventListener('input',draw);
+  let px=null;
+  cv.addEventListener('pointerdown',e=>{px=e.clientX;cv.setPointerCapture(e.pointerId)});
+  cv.addEventListener('pointermove',e=>{if(px==null)return;
+    sl.value=Math.min(40,Math.max(5,+sl.value+(e.clientX-px)*0.07));px=e.clientX;draw()});
+  cv.addEventListener('pointerup',()=>px=null);
+  addEventListener('resize',draw);draw();
+})();
+
+/* ================= SHT03 三维 ================= */
+(function(){
+  const cvs=$('#v3');
+  if(window.__no3d||!window.THREE){$('#v3wrap').style.display='none';$('#v3fallback').style.display='block';return}
+  const R=new THREE.WebGLRenderer({canvas:cvs,antialias:true,alpha:true});
+  R.setPixelRatio(Math.min(devicePixelRatio||1,2));
+  const S=new THREE.Scene();
+  const C=new THREE.PerspectiveCamera(40,1,1,2000);C.position.set(150,150,230);C.lookAt(0,20,0);
+  S.add(new THREE.AmbientLight(0xE9F1FF,.75));
+  const dl=new THREE.DirectionalLight(0xffffff,.55);dl.position.set(120,220,160);S.add(dl);
+  const world=new THREE.Group();S.add(world);
+  const matP=c=>new THREE.MeshLambertMaterial({color:c});
+  function edged(geo,color,ec){const m=new THREE.Mesh(geo,matP(color));
+    m.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo),
+      new THREE.LineBasicMaterial({color:ec||0xE9F1FF})));return m}
+  const parts={};
+  const base=edged(new THREE.BoxGeometry(240,10,150),0x123663);base.position.y=-28;world.add(base);
+  const table=edged(new THREE.CylinderGeometry(62,62,8,48),0x1B4B8F);table.position.y=-14;world.add(table);
+  parts['度盘转台']=[table];
+  const plateG=new THREE.Group();world.add(plateG);
+  const plate=edged(new THREE.CylinderGeometry(52,52,3,40),0x2A5CA8);plate.position.y=-8;plateG.add(plate);
+  const rods=[];
+  LATS.square.forEach(p=>{const r=edged(new THREE.CylinderGeometry(2.2,2.2,34,10),0xE9F1FF,0x9FC0EE);
+    r.position.set(p[0]*.9,10,p[1]*.9);plateG.add(r);rods.push(r)});
+  parts['样品盘 · 金属棍阵']=[plate,...rods];
+  function arm(){const g=new THREE.Group();
+    const a=edged(new THREE.BoxGeometry(90,6,9),0x1B4B8F);a.position.set(105,-2,0);g.add(a);
+    const radar=edged(new THREE.BoxGeometry(16,22,10),0x2A5CA8);radar.position.set(155,10,0);g.add(radar);
+    const lens=edged(new THREE.CylinderGeometry(17,17,4,32),0x9FC0EE);
+    lens.rotation.z=Math.PI/2;lens.position.set(62,10,0);g.add(lens);
+    return {g,radar,lens}}
+  const tx=arm();tx.g.rotation.y=Math.PI;world.add(tx.g);
+  const rx=arm();world.add(rx.g);
+  parts['发射端(雷达+透镜)']=[tx.radar,tx.lens];
+  parts['接收臂(2θ)']=[rx.radar,rx.lens];
+  const lg=$('#legend');
+  Object.keys(parts).forEach(k=>{const b=document.createElement('button');b.textContent=k;
+    b.onclick=()=>{parts[k].forEach(m=>{const c0=m.material.color.getHex();
+      m.material.color.set(0xF0B429);setTimeout(()=>m.material.color.set(c0),700)})};lg.appendChild(b)});
+  let A=30,playing=false,rotY=0.5,rotX=0.32,down=null,needAF=true;
+  $('#play3').onclick=e=>{playing=!playing;e.target.classList.toggle('on',playing);
+    e.target.textContent=playing?'⏸ 暂停联动':'▶ 演示 θ-2θ 联动'};
+  cvs.addEventListener('pointerdown',e=>{down=[e.clientX,e.clientY];cvs.setPointerCapture(e.pointerId)});
+  cvs.addEventListener('pointermove',e=>{if(!down)return;
+    rotY+=(e.clientX-down[0])*.006;rotX=Math.max(.05,Math.min(.9,rotX+(e.clientY-down[1])*.004));
+    down=[e.clientX,e.clientY]});
+  cvs.addEventListener('pointerup',()=>down=null);
+  let t=0,vis=false;
+  new IntersectionObserver(en=>vis=en[0].isIntersecting,{threshold:.1}).observe(cvs);
+  function size(){const w=cvs.clientWidth,h=cvs.clientHeight;
+    if(cvs.width!==w*R.getPixelRatio()){R.setSize(w,h,false);C.aspect=w/h;C.updateProjectionMatrix()}}
+  (function loop(){requestAnimationFrame(loop);if(!vis)return;size();
+    t+=0.008;if(playing&&!RM)A=18+29*(1-Math.cos(t*Math.PI));
+    rx.g.rotation.y=-A*Math.PI/180;
+    plateG.rotation.y=-A/2*Math.PI/180;
+    if(!down&&!RM)rotY+=0.0012;
+    world.rotation.y=rotY;world.rotation.x=rotX;
+    R.render(S,C)})();
+})();
+
+/* ================= SHT04 实测图 ================= */
+(function(){
+  const svg=$('#chart'),NS='http://www.w3.org/2000/svg';
+  const X=a=>28+(a-24)*(320/14), Y=v=>206-Math.sqrt(v/80)*178;
+  function el(n,at,tx){const e=document.createElementNS(NS,n);
+    for(const k in at)e.setAttribute(k,at[k]);if(tx)e.textContent=tx;svg.appendChild(e);return e}
+  el('line',{x1:28,y1:206,x2:348,y2:206,class:'svgdim'});
+  [1,20,80].forEach(v=>{el('line',{x1:24,y1:Y(v),x2:348,y2:Y(v),class:'svgdim','stroke-dasharray':'2 5'});
+    el('text',{x:2,y:Y(v)+3,class:'svgtxt'},'×'+v)});
+  [24,26,28,30,32,34,36,38].forEach(a=>el('text',{x:X(a)-6,y:222,class:'svgtxt'},a+'°'));
+  el('text',{x:150,y:234,class:'svgtxt'},'臂角 2θ');
+  // 平滑包络(细)+ 实测折线(主)
+  let d='';for(let a=25;a<=37.2;a+=.2)d+=(d?'L':'M')+X(a)+' '+Y(Math.min(profile(a),80));
+  el('path',{d,class:'svgdim',stroke:'#F0B429','stroke-width':1,fill:'none',opacity:.55});
+  let pd='';REAL.forEach(p=>pd+=(pd?'L':'M')+X(p[0])+' '+Y(p[1]));
+  el('path',{d:pd,stroke:'#F0B429','stroke-width':2.2,fill:'none'});
+  REAL.forEach(p=>{el('circle',{cx:X(p[0]),cy:Y(p[1]),r:3.4,fill:'#F0B429'});
+    el('text',{x:X(p[0])-10,y:Y(p[1])-8,class:'svgtxt',fill:'#F0B429'},p[1]+'×')});
+  el('line',{x1:X(29.9),y1:22,x2:X(29.9),y2:206,stroke:'#E2542F','stroke-dasharray':'4 4','stroke-width':1.3});
+  el('text',{x:X(29.9)+5,y:32,class:'svgtxt',fill:'#E2542F'},'峰心 29.90°');
+  el('path',{d:`M ${X(29)} ${Y(40)} h ${X(30.9)-X(29)}`,class:'svgline',stroke:'#E9F1FF'});
+  el('text',{x:X(31.1),y:Y(40)+3,class:'svgtxt'},'FWHM≈1.9°');
+  // 对比度计数动画
+  const tgt=80,e1=$('#cv1');let s=null;
+  new IntersectionObserver(en=>{if(en[0].isIntersecting&&s==null){s=performance.now();
+    (function cu(){const k=Math.min(1,(performance.now()-s)/900);
+      e1.textContent=Math.round(tgt*(RM?1:k*k*(3-2*k)));if(k<1&&!RM)requestAnimationFrame(cu)})()}},
+    {threshold:.4}).observe(e1);
+})();
+
+/* ================= SHT05 晶格卡 ================= */
+(function(){
+  const meta=[["square","30.0° / 62.4°","ok","已实测 · 80×"],
+    ["hex","33.4° / 70.0°","half","特征已现"],
+    ["cscl","仅 62.4° · 30° 消光","half","特征已现"],
+    ["fcc","34.4° / 72.6°","half","特征已现"],
+    ["kagome","24.4° / 49.9°","","待测"],
+    ["penrose","49.9° · 准晶","","待测"]];
+  const box=$('#lats');
+  meta.forEach(([k,pk,st,stx])=>{
+    const d=document.createElement('div');d.className='lat';
+    d.innerHTML=`<canvas></canvas><div class="nm">${k}<span class="svgtxt"> · ${LATS[k].length}根</span></div>
+      <div class="pk mono">${pk}</div><div class="st ${st}">${stx}</div>`;
+    box.appendChild(d);
+    const cv=d.querySelector('canvas'),dpr=Math.min(devicePixelRatio||1,2);
+    requestAnimationFrame(()=>{const w=cv.clientWidth;cv.width=cv.height=w*dpr;
+      const g=cv.getContext('2d');g.scale(dpr,dpr);
+      g.fillStyle='#E9F1FF';
+      LATS[k].forEach(p=>{g.beginPath();
+        g.arc(w/2+p[0]*(w/2-8)/62,w/2+p[1]*(w/2-8)/62,k=='penrose'?1.6:2.3,0,7);g.fill()})});
+  });
+})();
+
+/* ================= SHT06 迈克尔逊 ================= */
+(function(){
+  const g=$('#m1g'),gh=$('#m1ghost'),armB=$('#armB'),out=$('#michRead'),bar=$('#michBar');
+  let d=12.4,down=null;
+  const PX=1.5; // 1mm -> 1.5px
+  function render(){
+    g.setAttribute('transform',`translate(${d*PX} 0)`);
+    armB.setAttribute('d',`M150 156 H${252+d*PX} M${252+d*PX} 156 H150 M150 156 V236`);
+    const I=(Math.cos(2*Math.PI*d/LAM))**2;
+    bar.style.width=(6+92*I)+'%';
+    out.innerHTML=`动镜位移 d = <b>${d.toFixed(2)} mm</b> · 光程差 2d = ${(2*d).toFixed(2)} mm<br>`+
+      `接收强度 ∝ cos²(2πd/λ) = <b class="hit">${(I*100).toFixed(0)}%</b> · `+
+      `已扫过明纹 <b>${Math.floor(d/(LAM/2))}</b> 条(每 ${(LAM/2).toFixed(2)} mm 一条 → λ = 2×条纹间距)`;
+  }
+  function move(x){d=Math.max(0,Math.min(31,d+x/PX));render()}
+  g.addEventListener('pointerdown',e=>{down=e.clientX;g.setPointerCapture(e.pointerId)});
+  g.addEventListener('pointermove',e=>{if(down==null)return;
+    const sc=$('#mich').getBoundingClientRect().width/360;move((e.clientX-down)/sc);down=e.clientX});
+  g.addEventListener('pointerup',()=>down=null);
+  render();
+})();
+
+/* ================= 滚动显现 ================= */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('on')}),{threshold:.08});
+document.querySelectorAll('.reveal').forEach(s=>io.observe(s));
+</script>
+</body>
+</html>
