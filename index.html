@@ -46,7 +46,7 @@ body{font-size:17px}.note{font-size:16px}.caption{font-size:15px}.eyebrow{font-s
   <h2>布拉格衍射原理</h2>
   <p>相邻晶面的散射波产生光程差 <span class="mono" style="color:var(--brass)">2d·sinθ</span>。当其等于整数个波长时，散射波同相叠加，形成衍射峰。</p>
   <div class="bragg"><canvas id="bragg" height="240"></canvas><div class="ctl"><span>掠射角 θ</span><input id="th" type="range" min="5" max="40" step="0.1" value="15"></div><div class="readout" id="braggRead"></div></div>
-  <p class="note">正方晶格：d = 24 mm；λ = 12.43 mm；一级峰理论位置为 2θ = 30.0°。</p>
+  <p class="note">SQUARE lattice：d = 24 mm；λ = 12.43 mm；一级峰理论位置为 2θ = 30.0°。</p>
 </section>
 
 <section class="sheet reveal" id="s3">
@@ -58,11 +58,11 @@ body{font-size:17px}.note{font-size:16px}.caption{font-size:15px}.eyebrow{font-s
   <div class="modelactions"><button id="playFlow">▶ 播放全过程</button><button id="scaleJump">↗ 晶格尺度</button><button id="replayData">▷ 回放实测曲线</button><button id="resetView">↺ 复位视角</button><span class="hint" id="flowHint">拖动模型旋转视角 · 自动播放约 20 s</span></div>
   <div class="steps" id="steps"></div><div class="stepbox" id="stepbox"></div>
   <div class="modellegend"><span><i class="mblue"></i>结构件</span><span><i class="mbrass"></i>微波传播路径</span><span><i class="mred"></i>峰值状态</span></div>
-  <div class="cockpit"><div class="cockpithead"><span>DATA LINK / 实测数据联动</span><span>实测曲线 · 5×5×5 钢球晶格</span></div><div class="cockpitplot"><img data-img="meas5x5" alt="5x5x5钢球晶格实测曲线"><span class="sweepLine" id="sweepLine"></span><span class="dataPeak p15">峰① 15°</span><span class="dataPeak p29">峰② 29°</span></div><div class="cockpitread" id="dataRead">点击“回放实测曲线”，查看扫描线经过实测峰位时的参数反演。</div></div>
+  <div class="cockpit"><div class="cockpithead"><span>DATA LINK / 实测数据联动</span><span>实测曲线 · 5×5×5 STEEL-SPHERE LATTICE</span></div><div class="cockpitplot"><img data-img="meas5x5" alt="5x5x5 STEEL-SPHERE LATTICE实测曲线"><span class="sweepLine" id="sweepLine"></span><span class="dataPeak p15">峰① 15°</span><span class="dataPeak p29">峰② 29°</span></div><div class="cockpitread" id="dataRead">点击“回放实测曲线”，查看扫描线经过实测峰位时的参数反演。</div></div>
 </section>
 
 <section class="sheet reveal" id="s4">
-  <div class="eyebrow"><span>SHT 04 / 06 · 实测记录</span><i>5×5×5 钢球晶格</i></div>
+  <div class="eyebrow"><span>SHT 04 / 06 · 实测记录</span><i>5×5×5 STEEL-SPHERE LATTICE</i></div>
   <h2>实测峰位与晶格参数反演</h2>
   <div class="two"><div><img class="figure" data-img="sample3d" alt="5×5×5钢球晶格实物图"><div class="caption">图 3　125 颗 Φ8 mm 不锈钢珠；设计 a = 25 mm。</div></div><div><div class="formula">d = kλ / (2 sinθ)</div></div></div>
   <div class="plots"><figure><img data-img="cst5x5" alt="5x5x5钢球晶格CST仿真谱线"><figcaption>CST 仿真谱线</figcaption></figure><figure><img data-img="meas5x5" alt="5x5x5钢球晶格实测曲线"><figcaption>实测扫描曲线</figcaption></figure></div>
@@ -72,14 +72,14 @@ body{font-size:17px}.note{font-size:16px}.caption{font-size:15px}.eyebrow{font-s
 
 <section class="sheet reveal" id="s5">
   <div class="eyebrow"><span>SHT 05 / 06 · 样品库</span><i>实物 · CST · 实测</i></div>
-  <h2>六种可换晶格样品</h2>
+  <h2>SIX REPLACEABLE LATTICES</h2>
   <p class="note">同一装置、同一 θ–2θ 流程。</p>
-  <div class="lattice"><div class="lathead"><h3>正方晶格</h3><span class="n">a=24 mm · 13 根 Ø4</span></div><div class="latbody"><img data-img="sqSample" alt="正方晶格实物"><div class="latplots"><img data-img="sqCst" alt="正方晶格 CST 仿真"><img data-img="sqMeas" alt="正方晶格实测"></div></div><div class="latnote">一级：理论/实测 30.0°，反演 d=24.0 mm；二级：62.0°/66.0°，反演 d=22.8 mm。</div></div>
-  <div class="lattice"><div class="lathead"><h3>六方晶格</h3><span class="n">a=25 mm · 16 根 Ø4</span></div><div class="latbody"><img data-img="hexSample" alt="六方晶格实物"><div class="latplots"><img data-img="hexCst" alt="六方晶格CST"><img data-img="hexMeas" alt="六方晶格实测"></div></div><div class="latnote">d=a√3/2；一级 33.0°/34.0°，反演 d=21.3 mm；二级 70.0°/74.0°，反演 d=20.7 mm。</div></div>
-  <div class="lattice"><div class="lathead"><h3>体心晶格</h3><span class="n">a=24 mm · 25 根 Ø3</span></div><div class="latbody"><img data-img="bctSample" alt="体心晶格实物"><div class="latplots"><img data-img="bctCst" alt="体心晶格CST"><img data-img="bctMeas" alt="体心晶格实测"></div></div><div class="latnote">一级 30.0°系统消光；二级理论/实测 62.0°，反演 d=24.1 mm。</div></div>
-  <div class="lattice"><div class="lathead"><h3>面心晶格</h3><span class="n">a=42 mm · 9 根 Ø3</span></div><div class="latbody"><img data-img="fccSample" alt="面心晶格实物"><div class="latplots"><img data-img="fccCst" alt="面心晶格CST"><img data-img="fccMeas" alt="面心晶格实测"></div></div><div class="latnote">一级理论/实测 36.0°；二级 77.0°/77.8°，反演 d=19.8 mm。</div></div>
-  <div class="lattice"><div class="lathead"><h3>笼目晶格</h3><span class="n">边长17 · 23 根 Ø2.5</span></div><div class="latbody"><img data-img="kagomeSample" alt="笼目晶格实物"><div class="latplots"><img data-img="kagomeCst" alt="笼目晶格CST"><img data-img="kagomeMeas" alt="笼目晶格实测"></div></div><div class="latnote">一级 24.0°/26.0°，反演 d=27.6 mm；二级理论/实测 50.0°，反演 d=29.4 mm。</div></div>
-  <div class="lattice"><div class="lathead"><h3>彭罗斯准晶</h3><span class="n">边长18 · 46 根 Ø2.5</span></div><div class="latbody"><img data-img="penroseSample" alt="彭罗斯准晶实物"><div class="latplots"><img data-img="penroseCst" alt="彭罗斯准晶CST"><img data-img="penroseMeas" alt="彭罗斯准晶实测"></div></div><div class="latnote">峰①理论/实测 50.0°；峰② 87.0°/90.0°，反演 d=8.8 mm。</div></div>
+  <div class="lattice"><div class="lathead"><h3>SQUARE</h3><span class="n">a=24 mm · 13 根 Ø4</span></div><div class="latbody"><img data-img="sqSample" alt="SQUARE lattice实物"><div class="latplots"><img data-img="sqCst" alt="SQUARE lattice CST 仿真"><img data-img="sqMeas" alt="SQUARE lattice实测"></div></div><div class="latnote">一级：理论/实测 30.0°，反演 d=24.0 mm；二级：62.0°/66.0°，反演 d=22.8 mm。</div></div>
+  <div class="lattice"><div class="lathead"><h3>HEX</h3><span class="n">a=25 mm · 16 根 Ø4</span></div><div class="latbody"><img data-img="hexSample" alt="HEX lattice实物"><div class="latplots"><img data-img="hexCst" alt="HEX lattice CST"><img data-img="hexMeas" alt="HEX lattice实测"></div></div><div class="latnote">d=a√3/2；一级 33.0°/34.0°，反演 d=21.3 mm；二级 70.0°/74.0°，反演 d=20.7 mm。</div></div>
+  <div class="lattice"><div class="lathead"><h3>CSCL</h3><span class="n">a=24 mm · 25 根 Ø3</span></div><div class="latbody"><img data-img="bctSample" alt="CSCL lattice实物"><div class="latplots"><img data-img="bctCst" alt="CSCL lattice CST"><img data-img="bctMeas" alt="CSCL lattice实测"></div></div><div class="latnote">一级 30.0°系统消光；二级理论/实测 62.0°，反演 d=24.1 mm。</div></div>
+  <div class="lattice"><div class="lathead"><h3>FCC</h3><span class="n">a=42 mm · 9 根 Ø3</span></div><div class="latbody"><img data-img="fccSample" alt="FCC lattice实物"><div class="latplots"><img data-img="fccCst" alt="FCC lattice CST"><img data-img="fccMeas" alt="FCC lattice实测"></div></div><div class="latnote">一级理论/实测 36.0°；二级 77.0°/77.8°，反演 d=19.8 mm。</div></div>
+  <div class="lattice"><div class="lathead"><h3>KAGOME</h3><span class="n">边长17 · 23 根 Ø2.5</span></div><div class="latbody"><img data-img="kagomeSample" alt="KAGOME lattice实物"><div class="latplots"><img data-img="kagomeCst" alt="KAGOME lattice CST"><img data-img="kagomeMeas" alt="KAGOME lattice实测"></div></div><div class="latnote">一级 24.0°/26.0°，反演 d=27.6 mm；二级理论/实测 50.0°，反演 d=29.4 mm。</div></div>
+  <div class="lattice"><div class="lathead"><h3>PENROSE</h3><span class="n">边长18 · 46 根 Ø2.5</span></div><div class="latbody"><img data-img="penroseSample" alt="PENROSE lattice实物"><div class="latplots"><img data-img="penroseCst" alt="PENROSE lattice CST"><img data-img="penroseMeas" alt="PENROSE lattice实测"></div></div><div class="latnote">峰①理论/实测 50.0°；峰② 87.0°/90.0°，反演 d=8.8 mm。</div></div>
 </section>
 
 <section class="sheet reveal" id="s6">
